@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HKDSE Biology Revision Quiz: Chapter 17</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --secondary: #0d9488;
+            --accent: #d97706;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --correct: #16a34a;
+            --correct-bg: #f0fdf4;
+            --incorrect: #dc2626;
+            --incorrect-bg: #fef2f2;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #93c5fd;
+            font-size: 0.95rem;
+        }
+
+        .controls {
+            background: var(--card-bg);
+            padding: 16px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        select, button {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        select {
+            background: white;
+            color: var(--text);
+        }
+
+        button.btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        button.btn-primary:hover {
+            background: var(--primary-light);
+        }
+
+        button.btn-retry {
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-weight: 600;
+            display: none;
+        }
+
+        button.btn-retry:hover {
+            opacity: 0.9;
+        }
+
+        .score-board {
+            display: flex;
+            gap: 16px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .score-item {
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: var(--bg);
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: border-color 0.2s;
+        }
+
+        .question-card.wrong-attempt {
+            border-left: 4px solid var(--incorrect);
+        }
+
+        .question-card.correct-attempt {
+            border-left: 4px solid var(--correct);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .question-tag {
+            background: #eff6ff;
+            color: var(--primary-light);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            white-space: pre-line;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            text-align: left;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: var(--text);
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .option-btn.selected-correct {
+            background: var(--correct-bg);
+            border-color: var(--correct);
+            color: var(--correct);
+            font-weight: 600;
+        }
+
+        .option-btn.selected-incorrect {
+            background: var(--incorrect-bg);
+            border-color: var(--incorrect);
+            color: var(--incorrect);
+            font-weight: 600;
+        }
+
+        .option-btn.reveal-correct {
+            background: var(--correct-bg);
+            border-color: var(--correct);
+            color: var(--correct);
+        }
+
+        .explanation {
+            margin-top: 16px;
+            padding: 14px 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-light);
+            font-size: 0.9rem;
+            color: #334155;
+            display: none;
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .no-questions {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            color: var(--text-light);
+        }
+
+        @media (max-width: 600px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .score-board {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>HKDSE Biology Chapter 17 Revision Quiz</h1>
+        <p>Coordination in Humans | 25 Text-Aligned Multiple-Choice Questions</p>
+    </header>
+
+    <div class="controls">
+        <div class="filter-group">
+            <label for="topicFilter">Topic Filter:</label>
+            <select id="topicFilter" onchange="filterQuestions()">
+                <option value="ALL">All Topics (25 Qs)</option>
+                <option value="17.1">17.1 Nervous System Overview</option>
+                <option value="17.2">17.2 Neurones & Transmission</option>
+                <option value="17.3">17.3 Central Nervous System</option>
+                <option value="17.4">17.4 Reflex Arc & Voluntary Actions</option>
+            </select>
+        </div>
+
+        <div class="score-board">
+            <div class="score-item">Score: <span id="score">0</span> / <span id="attempted">0</span></div>
+            <div class="score-item" style="color: var(--incorrect);">Wrong: <span id="wrongCount">0</span></div>
+        </div>
+
+        <div>
+            <button id="retryBtn" class="btn-retry" onclick="toggleRetryMode()">Retry Incorrect Questions (<span id="wrongBadge">0</span>)</button>
+            <button class="btn-primary" onclick="resetQuiz()">Reset All</button>
+        </div>
+    </div>
+
+    <div id="quizContainer"></div>
+</div>
+
+<script>
+const quizData = [
+    // 17.1 Nervous System Overview
+    {
+        id: 1,
+        section: "17.1",
+        question: "Which of the following correctly pairs a component of the human nervous system with its structural classification and primary role?",
+        options: [
+            "A. Spinal cord | Peripheral nervous system | Integrates reflex actions",
+            "B. Cranial nerves | Peripheral nervous system | Link the brain to head receptors and effectors",
+            "C. Spinal nerves | Central nervous system | Transmit nerve impulses within the brain",
+            "D. Brain | Peripheral nervous system | Coordinates voluntary movements"
+        ],
+        answer: 1,
+        explanation: "Cranial nerves form part of the peripheral nervous system (PNS) and connect receptors/effectors in the head directly to the brain."
+    },
+    {
+        id: 2,
+        section: "17.1",
+        question: "Which component of the nervous system consists of 31 pairs of nerves emerging directly from the spinal cord?",
+        options: [
+            "A. Cranial nerves",
+            "B. Central nervous system",
+            "C. Spinal nerves",
+            "D. Autonomic ganglia"
+        ],
+        answer: 2,
+        explanation: "There are 31 pairs of spinal nerves originating from the spinal cord, connecting it to the rest of the body."
+    },
+
+    // 17.2 Neurones & Nerve Impulse Transmission
+    {
+        id: 3,
+        section: "17.2",
+        question: "A neurone has a cell body located in a dorsal root ganglion with a single long dendron and a short axon. What type of neurone is this?",
+        options: [
+            "A. Motor neurone",
+            "B. Interneurone",
+            "C. Sensory neurone",
+            "D. Effector neurone"
+        ],
+        answer: 2,
+        explanation: "Sensory neurones have their cell bodies located outside the CNS in dorsal root ganglia, with a long dendron extending from receptors."
+    },
+    {
+        id: 4,
+        section: "17.2",
+        question: "Which feature correctly distinguishes an interneurone from a motor neurone?",
+        options: [
+            "A. Interneurones are located entirely within the grey matter of the central nervous system.",
+            "B. Motor neurones have long dendrons and short axons.",
+            "C. Interneurones transmit impulses directly to muscular effectors.",
+            "D. Motor neurones lack myelin sheaths."
+        ],
+        answer: 0,
+        explanation: "Interneurones (relay neurones) lie entirely within the grey matter of the CNS to connect sensory and motor neurones."
+    },
+    {
+        id: 5,
+        section: "17.2",
+        question: "Why does a myelinated nerve fibre transmit nerve impulses faster than an unmyelinated nerve fibre of equal diameter?",
+        options: [
+            "A. The myelin sheath secretes neurotransmitters along the axon.",
+            "B. The myelin sheath acts as an electrical insulator, forcing impulses to jump between nodes of Ranvier.",
+            "C. The nodes of Ranvier prevent electrical current from escaping.",
+            "D. Myelinated fibres have more cell bodies per unit length."
+        ],
+        answer: 1,
+        explanation: "The myelin sheath insulates the axon, allowing action potentials to jump from node to node (saltatory conduction), significantly speeding up impulse transmission."
+    },
+    {
+        id: 6,
+        section: "17.2",
+        question: "Which structural feature of a chemical synapse ensures that nerve impulses travel strictly in one direction?",
+        options: [
+            "A. Neurotransmitters are synthesized in the postsynaptic membrane.",
+            "B. Synaptic vesicles exist only in presynaptic knobs, while receptor sites exist on postsynaptic membranes.",
+            "C. Myelin sheaths cover the synaptic cleft.",
+            "D. Interneurones prevent backward electrical flow."
+        ],
+        answer: 1,
+        explanation: "Synaptic vesicles containing neurotransmitters are present only in the presynaptic knob, and specific receptors exist only on the postsynaptic membrane."
+    },
+    {
+        id: 7,
+        section: "17.2",
+        question: "What happens to neurotransmitters in the synaptic cleft immediately after they bind to receptors on the postsynaptic membrane?",
+        options: [
+            "A. They are permanently integrated into the postsynaptic membrane.",
+            "B. They diffuse back into the axon cell body intact.",
+            "C. They are broken down by enzymes or reabsorbed by the presynaptic knob.",
+            "D. They trigger continuous nerve impulse generation indefinitely."
+        ],
+        answer: 2,
+        explanation: "To prevent continuous stimulation, neurotransmitter molecules are rapidly broken down by specific enzymes or reabsorbed into the presynaptic knob."
+    },
+
+    // 17.3 Central Nervous System (Brain and Spinal Cord)
+    {
+        id: 8,
+        section: "17.3",
+        question: "Which of the following correctly describes the distribution of grey matter and white matter in the human cerebrum and spinal cord?",
+        options: [
+            "A. Cerebrum: Outer white matter / Inner grey matter; Spinal cord: Outer grey matter / Inner white matter",
+            "B. Cerebrum: Outer grey matter / Inner white matter; Spinal cord: Outer white matter / Inner grey matter",
+            "C. Cerebrum: Grey matter only; Spinal cord: White matter only",
+            "D. Cerebrum: White matter only; Spinal cord: Grey matter only"
+        ],
+        answer: 1,
+        explanation: "The cerebrum has an outer cortex of grey matter (cell bodies) and inner white matter (myelinated fibres); the spinal cord has outer white matter and inner H-shaped grey matter."
+    },
+    {
+        id: 9,
+        section: "17.3",
+        question: "Which function is directly controlled by the cerebral cortex?",
+        options: [
+            "A. Coordination of muscular posture and body balance",
+            "B. Regulation of involuntary heart rate and breathing rhythm",
+            "C. High-level reasoning, intelligence, language, and conscious perception",
+            "D. Secretion of digestive enzymes"
+        ],
+        answer: 2,
+        explanation: "The cerebral cortex is responsible for conscious activities, including reasoning, intelligence, memory, speech, and sensation processing."
+    },
+    {
+        id: 10,
+        section: "17.3",
+        question: "A patient suffers a brain injury and displays jerky, uncoordinated muscle movements and poor physical balance when walking. Which brain region is damaged?",
+        options: [
+            "A. Medulla oblongata",
+            "B. Cerebellum",
+            "C. Thalamus",
+            "D. Cerebrum"
+        ],
+        answer: 1,
+        explanation: "The cerebellum coordinates voluntary muscle contraction and maintains body posture and balance."
+    },
+    {
+        id: 11,
+        section: "17.3",
+        question: "Which vital involuntary reflex centres are located in the medulla oblongata?",
+        options: [
+            "A. Visual interpretation and hearing centres",
+            "B. Cardiac, respiratory, and vasomotor centres",
+            "C. Body temperature regulation and hunger centres",
+            "D. Voluntary motor control centres"
+        ],
+        answer: 1,
+        explanation: "The medulla oblongata controls autonomic, involuntary vital activities such as heart rate, respiration rate, and blood pressure regulation."
+    },
+    {
+        id: 12,
+        section: "17.3",
+        question: "Which protective fluid cushions the central nervous system against mechanical shocks and supplies nutrients to neurones?",
+        options: [
+            "A. Synovial fluid",
+            "B. Aqueous humour",
+            "C. Cerebrospinal fluid",
+            "D. Endolymph"
+        ],
+        answer: 2,
+        explanation: "Cerebrospinal fluid (CSF) surrounds the brain and spinal cord, acting as a shock absorber and providing metabolic exchange."
+    },
+    {
+        id: 13,
+        section: "17.3",
+        question: "If a stroke damages the sensory area of the left cerebral hemisphere, what will be the effect on the patient?",
+        options: [
+            "A. Loss of sensation on the right side of the body",
+            "B. Loss of sensation on the left side of the body",
+            "C. Inability to coordinate body balance",
+            "D. Involuntary stopping of heartbeat"
+        ],
+        answer: 0,
+        explanation: "Sensory nerve pathways cross over in the CNS; the left sensory area receives and processes sensory signals from the right side of the body."
+    },
+
+    // 17.4 Reflex Arc & Voluntary Actions
+    {
+        id: 14,
+        section: "17.4",
+        question: "If the dorsal root of a spinal nerve on the right side is accidentally severed, what is the expected result?",
+        options: [
+            "A. Loss of sensation from the right side, but muscle contraction remains possible.",
+            "B. Loss of muscle movement on the right side, but sensation remains intact.",
+            "C. Loss of both sensation and muscle movement on the right side.",
+            "D. Complete paralysis of both left and right sides."
+        ],
+        answer: 0,
+        explanation: "The dorsal root contains sensory nerve fibres. Severing it blocks incoming sensory impulses (loss of sensation), while motor fibres in the ventral root remain intact."
+    },
+    {
+        id: 15,
+        section: "17.4",
+        question: "What would occur if the ventral root of a spinal nerve supplying the arm is severed?",
+        options: [
+            "A. Sensory feeling is lost, but the arm can still move voluntarily.",
+            "B. Arm muscles cannot contract (paralysis), but feeling/sensation is retained.",
+            "C. Knee-jerk reflex is lost, but arm reflexes remain unaffected.",
+            "D. No change occurs because impulses detour through cranial nerves."
+        ],
+        answer: 1,
+        explanation: "The ventral root contains motor nerve fibres. Severing it prevents outgoing motor impulses from reaching effectors (muscles), causing motor paralysis while preserving sensory input."
+    },
+    {
+        id: 16,
+        section: "17.4",
+        question: "Which of the following correctly orders the pathway of a spinal reflex arc?",
+        options: [
+            "A. Receptor -> Motor neurone -> Interneurone -> Sensory neurone -> Effector",
+            "B. Receptor -> Sensory neurone -> Interneurone -> Motor neurone -> Effector",
+            "C. Effector -> Sensory neurone -> Brain -> Motor neurone -> Receptor",
+            "D. Receptor -> Interneurone -> Sensory neurone -> Motor neurone -> Effector"
+        ],
+        answer: 1,
+        explanation: "The sequence of a standard reflex arc is: Receptor -> Sensory neurone -> Interneurone in spinal cord -> Motor neurone -> Effector."
+    },
+    {
+        id: 17,
+        section: "17.4",
+        question: "How does a voluntary action differ fundamentally from an involuntary reflex action?",
+        options: [
+            "A. Voluntary actions are always faster than reflex actions.",
+            "B. Voluntary actions originate from conscious thought in the cerebral cortex.",
+            "C. Involuntary reflex actions require conscious effort and decision making.",
+            "D. Reflex actions do not involve any neurones."
+        ],
+        answer: 1,
+        explanation: "Voluntary actions are initiated consciously by impulse generation in the cerebral cortex, whereas reflex actions occur automatically without conscious control."
+    },
+    {
+        id: 18,
+        section: "17.4",
+        question: "When touching a hot object unexpectedly, a person pulls their hand away before feeling pain. Why does this occur?",
+        options: [
+            "A. Pain receptors are only stimulated after muscle contraction completes.",
+            "B. The reflex arc pathway through the spinal cord is shorter and faster than sending impulses up to the cerebral cortex for pain perception.",
+            "C. The brain is not involved in generating the sensation of pain.",
+            "D. Motor neurones transmit impulses faster than sensory neurones."
+        ],
+        answer: 1,
+        explanation: "The withdrawal reflex is integrated directly in the spinal cord for immediate protection, whereas sensory impulses traveling up to the cerebrum take longer to register as pain."
+    },
+
+    // Mixed / Advanced HKDSE Questions
+    {
+        id: 19,
+        section: "17.2",
+        question: "Which of the following structures contain cell bodies of neurones?\n(1) Dorsal root ganglion\n(2) Grey matter of spinal cord\n(3) White matter of spinal cord",
+        options: [
+            "A. (1) and (2) only",
+            "B. (1) and (3) only",
+            "C. (2) and (3) only",
+            "D. (1), (2) and (3)"
+        ],
+        answer: 0,
+        explanation: "Dorsal root ganglia contain sensory neurone cell bodies; grey matter contains interneurone and motor neurone cell bodies. White matter consists only of nerve fibres (axons/dendrons)."
+    },
+    {
+        id: 20,
+        section: "17.2",
+        question: "Which factors increase the speed of nerve impulse transmission along an axon?\n(1) Presence of myelin sheath\n(2) Larger axon diameter\n(3) Lower body temperature",
+        options: [
+            "A. (1) and (2) only",
+            "B. (1) and (3) only",
+            "C. (2) and (3) only",
+            "D. (1), (2) and (3)"
+        ],
+        answer: 0,
+        explanation: "Myelination and larger axon diameter both decrease electrical resistance and increase speed. Lower temperature slows down metabolic and chemical ion channel processes."
+    },
+    {
+        id: 21,
+        section: "17.3",
+        question: "Which of the following functions are controlled by the cerebrum?\n(1) Feeling touch sensations\n(2) Controlling heart rate\n(3) Solving mathematical equations",
+        options: [
+            "A. (1) and (2) only",
+            "B. (1) and (3) only",
+            "C. (2) and (3) only",
+            "D. (1), (2) and (3)"
+        ],
+        answer: 1,
+        explanation: "Sensory perception (touch) and intellectual thinking (math) are cerebral functions. Heart rate control is managed by the medulla oblongata."
+    },
+    {
+        id: 22,
+        section: "17.4",
+        question: "In the knee-jerk reflex arc, which component is absent compared to a typical withdrawal reflex arc?",
+        options: [
+            "A. Sensory neurone",
+            "B. Interneurone",
+            "C. Motor neurone",
+            "D. Receptor"
+        ],
+        answer: 1,
+        explanation: "The knee-jerk reflex is a monosynaptic reflex arc in which the sensory neurone synapses directly with the motor neurone, omitting interneurones."
+    },
+    {
+        id: 23,
+        section: "17.2",
+        question: "What is the primary role of mitochondria concentrated inside the presynaptic knob?",
+        options: [
+            "A. To generate ATP required for neurotransmitter synthesis and vesicle movement",
+            "B. To electrical insulate the synaptic cleft",
+            "C. To break down postsynaptic receptor sites",
+            "D. To produce myelin sheath membranes"
+        ],
+        answer: 0,
+        explanation: "Mitochondria supply energy (ATP) needed for synthesizing neurotransmitters, packing them into vesicles, and active transport processes at the synapse."
+    },
+    {
+        id: 24,
+        section: "17.3",
+        question: "Which membrane layers protect the human brain and spinal cord, beneath the skull and vertebral column?",
+        options: [
+            "A. Pleural membranes",
+            "B. Meninges",
+            "C. Pericardium",
+            "D. Peritoneum"
+        ],
+        answer: 1,
+        explanation: "The meninges are the three protective membrane layers surrounding the central nervous system."
+    },
+    {
+        id: 25,
+        section: "17.1",
+        question: "Which statement accurately describes the main functional distinction between the central nervous system (CNS) and peripheral nervous system (PNS)?",
+        options: [
+            "A. The CNS detects stimuli; the PNS responds to stimuli.",
+            "B. The CNS integrates and processes information; the PNS conducts signals to and from the CNS.",
+            "C. The CNS consists of nerves; the PNS consists of grey matter.",
+            "D. The CNS controls voluntary actions only; the PNS controls involuntary reflexes only."
+        ],
+        answer: 1,
+        explanation: "The CNS (brain and spinal cord) acts as the integration center, while the PNS (nerves) transmits impulses between sensory receptors, the CNS, and effectors."
+    }
+];
+
+let userAnswers = {};
+let isRetryMode = false;
+let currentRetryIds = [];
+
+function renderQuiz() {
+    const container = document.getElementById('quizContainer');
+    const topicFilter = document.getElementById('topicFilter').value;
+    container.innerHTML = '';
+
+    let filteredQuestions = quizData.filter(q => {
+        if (isRetryMode) {
+            return currentRetryIds.includes(q.id);
+        }
+        if (topicFilter !== 'ALL' && q.section !== topicFilter) {
+            return false;
+        }
+        return true;
+    });
+
+    if (filteredQuestions.length === 0) {
+        container.innerHTML = `
+            <div class="no-questions">
+                <h3>No questions found!</h3>
+                <p>${isRetryMode ? 'Great job! You have no wrong questions in this view.' : 'Try selecting another topic filter.'}</p>
+            </div>
+        `;
+        return;
+    }
+
+    filteredQuestions.forEach((q) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `q-card-${q.id}`;
+
+        const answered = userAnswers[q.id] !== undefined;
+        const isCorrect = userAnswers[q.id] === q.answer;
+
+        if (answered) {
+            card.classList.add(isCorrect ? 'correct-attempt' : 'wrong-attempt');
+        }
+
+        let optionsHTML = '';
+        q.options.forEach((opt, optIdx) => {
+            let btnClass = 'option-btn';
+            if (answered) {
+                if (userAnswers[q.id] === optIdx) {
+                    btnClass += optIdx === q.answer ? ' selected-correct' : ' selected-incorrect';
+                } else if (optIdx === q.answer) {
+                    btnClass += ' reveal-correct';
+                }
+            }
+
+            optionsHTML += `
+                <button class="${btnClass}" 
+                        onclick="selectOption(${q.id}, ${optIdx})" 
+                        ${answered ? 'disabled' : ''}>
+                    <span>${opt}</span>
+                </button>
+            `;
+        });
+
+        card.innerHTML = `
+            <div class="question-header">
+                <span>Question ${q.id} of ${quizData.length}</span>
+                <span class="question-tag">Section ${q.section}</span>
+            </div>
+            <div class="question-text">${q.question}</div>
+            <div class="options">${optionsHTML}</div>
+            <div class="explanation" id="exp-${q.id}" style="display: ${answered ? 'block' : 'none'}">
+                <div class="explanation-title">Explanation:</div>
+                <div>${q.explanation}</div>
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+
+    updateScoreBoard();
+}
+
+function selectOption(qId, optIndex) {
+    userAnswers[qId] = optIndex;
+    renderQuiz();
+}
+
+function getWrongQuestionIds() {
+    return Object.keys(userAnswers)
+        .map(id => parseInt(id))
+        .filter(id => {
+            const q = quizData.find(item => item.id === id);
+            return q && userAnswers[id] !== q.answer;
+        });
+}
+
+function updateScoreBoard() {
+    const attemptedIds = Object.keys(userAnswers);
+    let correctCount = 0;
+    let wrongCount = 0;
+
+    attemptedIds.forEach(id => {
+        const q = quizData.find(item => item.id == id);
+        if (q) {
+            if (userAnswers[id] === q.answer) {
+                correctCount++;
+            } else {
+                wrongCount++;
+            }
+        }
+    });
+
+    const scoreEl = document.getElementById('score');
+    const attemptedEl = document.getElementById('attempted');
+    const wrongCountEl = document.getElementById('wrongCount');
+    const wrongBadgeEl = document.getElementById('wrongBadge');
+    const retryBtn = document.getElementById('retryBtn');
+
+    if (scoreEl) scoreEl.innerText = correctCount;
+    if (attemptedEl) attemptedEl.innerText = attemptedIds.length;
+    if (wrongCountEl) wrongCountEl.innerText = wrongCount;
+    if (wrongBadgeEl) wrongBadgeEl.innerText = wrongCount;
+
+    if (retryBtn) {
+        if (wrongCount > 0 && !isRetryMode) {
+            retryBtn.style.display = 'inline-block';
+            retryBtn.innerText = `Retry Incorrect Questions (${wrongCount})`;
+            retryBtn.style.background = "var(--accent)";
+        } else if (isRetryMode) {
+            retryBtn.style.display = 'inline-block';
+            retryBtn.innerText = "Show All Questions";
+            retryBtn.style.background = "var(--primary)";
+        } else {
+            retryBtn.style.display = 'none';
+        }
+    }
+}
+
+function toggleRetryMode() {
+    isRetryMode = !isRetryMode;
+
+    if (isRetryMode) {
+        currentRetryIds = getWrongQuestionIds();
+        currentRetryIds.forEach(id => {
+            delete userAnswers[id];
+        });
+    } else {
+        currentRetryIds = [];
+    }
+
+    renderQuiz();
+}
+
+function filterQuestions() {
+    renderQuiz();
+}
+
+function resetQuiz() {
+    userAnswers = {};
+    isRetryMode = false;
+    currentRetryIds = [];
+    const retryBtn = document.getElementById('retryBtn');
+    if (retryBtn) {
+        retryBtn.innerText = `Retry Incorrect Questions (0)`;
+        retryBtn.style.background = "var(--accent)";
+        retryBtn.style.display = 'none';
+    }
+    renderQuiz();
+}
+
+// Initial render
+renderQuiz();
+</script>
+
+</body>
+</html>
