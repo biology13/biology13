@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HKDSE Biology Revision Quiz: Chapter 16</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --secondary: #0d9488;
+            --accent: #d97706;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --correct: #16a34a;
+            --correct-bg: #f0fdf4;
+            --incorrect: #dc2626;
+            --incorrect-bg: #fef2f2;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #93c5fd;
+            font-size: 0.95rem;
+        }
+
+        .controls {
+            background: var(--card-bg);
+            padding: 16px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        select, button {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        select {
+            background: white;
+            color: var(--text);
+        }
+
+        button.btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        button.btn-primary:hover {
+            background: var(--primary-light);
+        }
+
+        button.btn-retry {
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-weight: 600;
+            display: none;
+        }
+
+        button.btn-retry:hover {
+            opacity: 0.9;
+        }
+
+        .score-board {
+            display: flex;
+            gap: 16px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .score-item {
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: var(--bg);
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: border-color 0.2s;
+        }
+
+        .question-card.wrong-attempt {
+            border-left: 4px solid var(--incorrect);
+        }
+
+        .question-card.correct-attempt {
+            border-left: 4px solid var(--correct);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .question-tag {
+            background: #eff6ff;
+            color: var(--primary-light);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            white-space: pre-line;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            text-align: left;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: var(--text);
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .option-btn.selected-correct {
+            background: var(--correct-bg);
+            border-color: var(--correct);
+            color: var(--correct);
+            font-weight: 600;
+        }
+
+        .option-btn.selected-incorrect {
+            background: var(--incorrect-bg);
+            border-color: var(--incorrect);
+            color: var(--incorrect);
+            font-weight: 600;
+        }
+
+        .option-btn.reveal-correct {
+            background: var(--correct-bg);
+            border-color: var(--correct);
+            color: var(--correct);
+        }
+
+        .explanation {
+            margin-top: 16px;
+            padding: 14px 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-light);
+            font-size: 0.9rem;
+            color: #334155;
+            display: none;
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .no-questions {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            color: var(--text-light);
+        }
+
+        @media (max-width: 600px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .score-board {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>HKDSE Biology Chapter 16 Revision Quiz</h1>
+        <p>Stimuli, Receptors and Responses | 50 Text-Aligned Multiple-Choice Questions</p>
+    </header>
+
+    <div class="controls">
+        <div class="filter-group">
+            <label for="topicFilter">Topic Filter:</label>
+            <select id="topicFilter" onchange="filterQuestions()">
+                <option value="ALL">All Topics (50 Qs)</option>
+                <option value="16.1">16.1 Irritability & Receptors</option>
+                <option value="16.2">16.2 Human Eyes & Vision</option>
+                <option value="16.3">16.3 Human Ears & Sound</option>
+                <option value="16.4">16.4 Phototropism in Plants</option>
+            </select>
+        </div>
+
+        <div class="score-board">
+            <div class="score-item">Score: <span id="score">0</span> / <span id="attempted">0</span></div>
+            <div class="score-item" style="color: var(--incorrect);">Wrong: <span id="wrongCount">0</span></div>
+        </div>
+
+        <div>
+            <button id="retryBtn" class="btn-retry" onclick="toggleRetryMode()">Retry Incorrect Questions (<span id="wrongBadge">0</span>)</button>
+            <button class="btn-primary" onclick="resetQuiz()">Reset All</button>
+        </div>
+    </div>
+
+    <div id="quizContainer"></div>
+</div>
+
+<script>
+const quizData = [
+    // 16.1 Irritability
+    {
+        id: 1,
+        section: "16.1",
+        question: "Which of the following correctly pairs the human receptor with the stimulus it detects and its location?",
+        options: [
+            "A. Mechanoreceptor | Touch | Eye",
+            "B. Chemoreceptor | Chemicals in air | Nose",
+            "C. Photoreceptor | Pressure wave | Ear",
+            "D. Thermoreceptor | Sound | Skin"
+        ],
+        answer: 1,
+        explanation: "Chemoreceptors in the nose detect chemicals in the air. Mechanoreceptors detect sound in the ear or touch in the skin."
+    },
+    {
+        id: 2,
+        section: "16.1",
+        question: "When a person hears a loud horn and turns his head toward the sound, what is the effector in this response?",
+        options: [
+            "A. Sensory hair cells in the ear",
+            "B. The brain",
+            "C. Neck muscles",
+            "D. Auditory nerve"
+        ],
+        answer: 2,
+        explanation: "Effectors are muscles or glands that produce responses. Here, the neck muscles turn the head."
+    },
+    {
+        id: 3,
+        section: "16.1",
+        question: "Which of the following statements about nervous and hormonal coordination is correct?",
+        options: [
+            "A. Nervous coordination involves nerve impulses transmitted along neurones.",
+            "B. Hormonal coordination relies solely on mechanoreceptors.",
+            "C. Nervous coordination is slower than hormonal coordination.",
+            "D. Both systems transmit nerve impulses directly to effectors."
+        ],
+        answer: 0,
+        explanation: "Nervous coordination utilizes nerve impulses travelling rapidly along nerves/neurones."
+    },
+
+    // 16.2 Human Eyes
+    {
+        id: 4,
+        section: "16.2",
+        question: "Which structure surrounding the front of the eyeball contains lysozyme to kill bacteria?",
+        options: [
+            "A. Eyebrows",
+            "B. Eyelashes",
+            "C. Tear glands (tears)",
+            "D. Sclera"
+        ],
+        answer: 2,
+        explanation: "Tears secreted by tear glands contain lysozyme, an enzyme that kills bacteria."
+    },
+    {
+        id: 5,
+        section: "16.2",
+        question: "Which layer of the eyeball contains a black pigment that absorbs light to reduce internal reflection?",
+        options: [
+            "A. Sclera",
+            "B. Choroid",
+            "C. Retina",
+            "D. Cornea"
+        ],
+        answer: 1,
+        explanation: "The choroid contains a black pigment to absorb light, preventing internal reflection and contributing to sharp vision."
+    },
+    {
+        id: 6,
+        section: "16.2",
+        question: "The cornea and the lens lack blood vessels. How are oxygen and nutrients supplied to them?",
+        options: [
+            "A. By the vitreous humour",
+            "B. By the aqueous humour",
+            "C. Directly from tear glands",
+            "D. From blood vessels in the sclera"
+        ],
+        answer: 1,
+        explanation: "The aqueous humour is a clear watery solution that supplies nutrients and oxygen to the cornea and lens."
+    },
+    {
+        id: 7,
+        section: "16.2",
+        question: "Refraction of light in the human eye takes place at:\n(1) Cornea\n(2) Aqueous humour\n(3) Lens\n(4) Vitreous humour",
+        options: [
+            "A. (1) and (3) only",
+            "B. (2) and (4) only",
+            "C. (1), (2) and (3) only",
+            "D. (1), (2), (3) and (4)"
+        ],
+        answer: 3,
+        explanation: "Light rays entering the eye are refracted by the cornea, aqueous humour, lens, and vitreous humour."
+    },
+    {
+        id: 8,
+        section: "16.2",
+        question: "Why is an image formed on the blind spot NOT visible?",
+        options: [
+            "A. Light rays cannot be focused on the blind spot.",
+            "B. The blind spot contains no photoreceptors to detect light.",
+            "C. The blind spot contains cone cells only.",
+            "D. The optic nerve prevents light from hitting the retina."
+        ],
+        answer: 1,
+        explanation: "The blind spot is where the optic nerve leaves the eyeball; it lacks photoreceptors so no nerve impulses are generated."
+    },
+    {
+        id: 9,
+        section: "16.2",
+        question: "Which of the following correctly describes rod cells?",
+        options: [
+            "A. Concentrated at the yellow spot; responsible for colour vision",
+            "B. Contain visual purple; sensitive to low light intensities",
+            "C. Less numerous than cone cells",
+            "D. Stimulated only by bright light"
+        ],
+        answer: 1,
+        explanation: "Rod cells contain visual purple, function in dim light (low light intensity), and are responsible for black and white vision."
+    },
+    {
+        id: 10,
+        section: "16.2",
+        question: "A person with normal vision sees a yellow object. Which types of cone cells are stimulated?",
+        options: [
+            "A. Red cone cells only",
+            "B. Green cone cells only",
+            "C. Red and green cone cells",
+            "D. Green and blue cone cells"
+        ],
+        answer: 2,
+        explanation: "Yellow colour perception results from the simultaneous stimulation of both red and green cone cells."
+    },
+    {
+        id: 11,
+        section: "16.2",
+        question: "When entering a dark room from bright sunlight, what changes occur in the iris?",
+        options: [
+            "A. Circular muscles contract, radial muscles relax; pupil constricts",
+            "B. Radial muscles contract, circular muscles relax; pupil dilates",
+            "C. Both circular and radial muscles contract",
+            "D. Ciliary muscles contract; pupil dilates"
+        ],
+        answer: 1,
+        explanation: "In dim light, radial muscles of the iris contract and circular muscles relax, causing the pupil to dilate."
+    },
+    {
+        id: 12,
+        section: "16.2",
+        question: "When looking at an object moving towards your face, what happens during eye accommodation?",
+        options: [
+            "A. Ciliary muscles relax; suspensory ligaments tighten; lens becomes thinner",
+            "B. Ciliary muscles contract; suspensory ligaments slacken; lens becomes thicker",
+            "C. Ciliary muscles contract; suspensory ligaments tighten; lens becomes thicker",
+            "D. Ciliary muscles relax; suspensory ligaments slacken; lens becomes thinner"
+        ],
+        answer: 1,
+        explanation: "For near vision, circular ciliary muscles contract, tension in suspensory ligaments decreases (slackens), and the elastic lens becomes thicker (more convex)."
+    },
+    {
+        id: 13,
+        section: "16.2",
+        question: "A person with short sight cannot see distant objects clearly because:",
+        options: [
+            "A. Light rays are focused behind the retina.",
+            "B. The eyeball is too short or the lens is too thin.",
+            "C. The eyeball is too long or the lens is too thick.",
+            "D. The cornea has an irregular curvature."
+        ],
+        answer: 2,
+        explanation: "In short sight, the eyeball is too long or the lens is too thick, so distant light rays focus in front of the retina."
+    },
+    {
+        id: 14,
+        section: "16.2",
+        question: "Short sight can be corrected by wearing glasses with:",
+        options: [
+            "A. Convex lenses to converge light rays before entering the eye",
+            "B. Concave lenses to diverge light rays before entering the eye",
+            "C. Cylindrical lenses with uniform curvature",
+            "D. Filter lenses that fatigue cone cells"
+        ],
+        answer: 1,
+        explanation: "Concave (diverging) lenses diverge light rays before they enter the eye, allowing the image to focus on the retina."
+    },
+    {
+        id: 15,
+        section: "16.2",
+        question: "Which eye defect is caused by high eye pressure due to improper drainage of the aqueous humour?",
+        options: [
+            "A. Cataract",
+            "B. Glaucoma",
+            "C. Astigmatism",
+            "D. Macular degeneration"
+        ],
+        answer: 1,
+        explanation: "Glaucoma is caused by elevated eye pressure due to poor drainage of aqueous humour, which can damage the optic nerve."
+    },
+    {
+        id: 16,
+        section: "16.2",
+        question: "In LASIK surgery, visual correction is achieved by reshaping which structure using a laser beam?",
+        options: [
+            "A. Lens",
+            "B. Retina",
+            "C. Cornea",
+            "D. Sclera"
+        ],
+        answer: 2,
+        explanation: "LASIK uses a laser beam to reshape the curvature of the cornea to correct light focusing."
+    },
+    {
+        id: 17,
+        section: "16.2",
+        question: "What is the primary cause of red-green colour blindness?",
+        options: [
+            "A. Loss of visual purple in rod cells",
+            "B. Poor functioning or deficiency of red or green cone cells",
+            "C. Cloudiness formed inside the lens",
+            "D. Degeneration of the blind spot"
+        ],
+        answer: 1,
+        explanation: "Red-green colour blindness is an inherited condition caused by deficient or poorly functioning red or green cone cells."
+    },
+    {
+        id: 18,
+        section: "16.2",
+        question: "Why is it easier to see a faint star at night by looking slightly to the side rather than directly at it?",
+        options: [
+            "A. Cone cells are concentrated at the periphery of the retina.",
+            "B. The yellow spot contains a high density of rod cells.",
+            "C. The periphery of the retina has a higher density of rod cells than the central area.",
+            "D. Direct light rays fall directly on the blind spot."
+        ],
+        answer: 2,
+        explanation: "The periphery has a high density of sensitive rod cells that detect dim light. Looking directly places the image on the yellow spot, which contains cone cells requiring bright light."
+    },
+
+    // 16.3 Human Ears
+    {
+        id: 19,
+        section: "16.3",
+        question: "Which of the following correctly pairs the ear structure with its primary function?",
+        options: [
+            "A. Pinna | Amplifies mechanical vibrations",
+            "B. Eardrum | Converts sound waves into mechanical vibrations",
+            "C. Ear bones | Directs sound waves to the auditory canal",
+            "D. Cochlea | Equalizes air pressure on both sides of eardrum"
+        ],
+        answer: 1,
+        explanation: "The eardrum vibrates when hit by sound waves, converting sound waves into mechanical vibrations."
+    },
+    {
+        id: 20,
+        section: "16.3",
+        question: "The middle ear contains three ear bones. What is their function?",
+        options: [
+            "A. To generate nerve impulses",
+            "B. To amplify and transmit vibrations to the oval window",
+            "C. To detect head tilt and maintain balance",
+            "D. To release fluid pressure into the Eustachian tube"
+        ],
+        answer: 1,
+        explanation: "Ear bones amplify and transmit mechanical vibrations from the eardrum to the oval window."
+    },
+    {
+        id: 21,
+        section: "16.3",
+        question: "What is the role of the Eustachian tube?",
+        options: [
+            "A. Connects middle ear to pharynx to equalize air pressure on both sides of eardrum",
+            "B. Transmits nerve impulses from cochlea to brain",
+            "C. Contains endolymph to stimulate sensory hair cells",
+            "D. Relieves liquid pressure from the round window"
+        ],
+        answer: 0,
+        explanation: "The Eustachian tube connects the middle ear to the pharynx, equalizing air pressure across the eardrum."
+    },
+    {
+        id: 22,
+        section: "16.3",
+        question: "Where are the sensory hair cells responsible for detecting sound vibrations located?",
+        options: [
+            "A. Upper canal filled with perilymph",
+            "B. Lower canal filled with perilymph",
+            "C. Central canal filled with endolymph",
+            "D. Semicircular canals"
+        ],
+        answer: 2,
+        explanation: "Sensory hair cells for hearing are located in the central canal of the cochlea, which is filled with endolymph."
+    },
+    {
+        id: 23,
+        section: "16.3",
+        question: "What allows the pressure built up in the cochlea during fluid wave movements to be released?",
+        options: [
+            "A. Oval window pushing inwards",
+            "B. Round window bulging outwards into the middle ear",
+            "C. Opening of the auditory canal",
+            "D. Secretion of perilymph"
+        ],
+        answer: 1,
+        explanation: "The flexible round window bulges outwards into the middle ear to dissipate pressure waves generated inside the cochlea."
+    },
+    {
+        id: 24,
+        section: "16.3",
+        question: "Sensory hair cells in the semicircular canals are stimulated by the movement of fluid to detect:",
+        options: [
+            "A. Pitch of sound",
+            "B. Head movements and maintain balance",
+            "C. Air pressure changes in middle ear",
+            "D. Loudness of sound"
+        ],
+        answer: 1,
+        explanation: "Semicircular canals contain endolymph and sensory hair cells that detect rotational/head movements to assist in maintaining balance."
+    },
+    {
+        id: 25,
+        section: "16.3",
+        question: "A patient suffering from conductive hearing loss due to damaged middle ear bones can best be assisted by:",
+        options: [
+            "A. A cochlear implant",
+            "B. A hearing aid that increases sound amplitude",
+            "C. Wearing convex lenses",
+            "D. Surgical removal of the pinna"
+        ],
+        answer: 1,
+        explanation: "Conductive hearing loss in outer/middle ears can often be treated using a hearing aid, which amplifies sound wave amplitude."
+    },
+    {
+        id: 26,
+        section: "16.3",
+        question: "How does a cochlear implant restore hearing in patients with damaged sensory hair cells?",
+        options: [
+            "A. By amplifying vibrations of the eardrum",
+            "B. By generating electrical impulses via electrodes to directly stimulate the auditory nerve",
+            "C. By replacing the perilymph with endolymph",
+            "D. By widening the Eustachian tube"
+        ],
+        answer: 1,
+        explanation: "A cochlear implant bypasses damaged sensory hair cells by converting sounds into electrical signals sent through electrodes directly to the auditory nerve."
+    },
+
+    // 16.4 Plant Phototropism
+    {
+        id: 27,
+        section: "16.4",
+        question: "Phototropism refers to the directional growth movement of a plant part in response to:",
+        options: [
+            "A. Gravity",
+            "B. Unilateral light",
+            "C. Water gradient",
+            "D. Chemical concentration"
+        ],
+        answer: 1,
+        explanation: "Phototropism is the directional growth response to unilateral light (light from one direction)."
+    },
+    {
+        id: 28,
+        section: "16.4",
+        question: "What are the phototropic responses of plant shoots and roots under unilateral light?",
+        options: [
+            "A. Shoots: positively phototropic | Roots: negatively phototropic",
+            "B. Shoots: negatively phototropic | Roots: positively phototropic",
+            "C. Both shoots and roots are positively phototropic",
+            "D. Neither shoots nor roots show phototropism"
+        ],
+        answer: 0,
+        explanation: "Shoots grow towards light (positive phototropism); roots grow away from light (negative phototropism)."
+    },
+    {
+        id: 29,
+        section: "16.4",
+        question: "Which statement best describes the biological significance of positive phototropism in shoots?",
+        options: [
+            "A. Enables roots to grow deep into soil for anchorage.",
+            "B. Brings leaves to face light for maximum photosynthesis.",
+            "C. Protects young leaves from insect infestation.",
+            "D. Prevents excessive water loss from stomata."
+        ],
+        answer: 1,
+        explanation: "Positive shoot phototropism exposes leaves to maximum sunlight, optimizing photosynthesis."
+    },
+    {
+        id: 30,
+        section: "16.4",
+        question: "In Charles Darwin's phototropism experiments (1880), what did he conclude about unilateral light detection?",
+        options: [
+            "A. Detected by the region of elongation below the tip.",
+            "B. Detected by the tip of the coleoptile.",
+            "C. Detected by the root cap.",
+            "D. Detected equally along the entire stem."
+        ],
+        answer: 1,
+        explanation: "Darwin proved that the stimulus (unilateral light) is detected by the coleoptile tip, though bending occurs below it."
+    },
+    {
+        id: 31,
+        section: "16.4",
+        question: "In Boysen-Jensen's experiments (1913), why did a coleoptile with a mica plate inserted on the shaded side fail to bend towards light?",
+        options: [
+            "A. Mica block blocks light transmission.",
+            "B. Mica plate is impermeable and blocked chemical signal transmission down the shaded side.",
+            "C. Mica destroyed all auxins in the tip.",
+            "D. Mica promoted uniform growth on both sides."
+        ],
+        answer: 1,
+        explanation: "Mica is an impermeable barrier. Inserting it on the shaded side blocked the chemical (auxin) from diffusing downwards."
+    },
+    {
+        id: 32,
+        section: "16.4",
+        question: "Frits Went (1926) isolated auxin from coleoptile tips using agar blocks. What was unique about his test procedure on decapitated coleoptiles?",
+        options: [
+            "A. Performed under bright unilateral light",
+            "B. Performed in complete darkness to eliminate the effect of light",
+            "C. Performed on clinostats rotating rapidly",
+            "D. Performed by submerging seedlings in liquid solution"
+        ],
+        answer: 1,
+        explanation: "Went placed agar blocks on decapitated coleoptiles in darkness to eliminate light as a variable."
+    },
+    {
+        id: 33,
+        section: "16.4",
+        question: "Where in a seedling are auxins primarily synthesized?",
+        options: [
+            "A. Regions of cell elongation",
+            "B. Apical meristems at shoot tips and root tips",
+            "C. Mature xylem tissues",
+            "D. Stomata of leaves"
+        ],
+        answer: 1,
+        explanation: "Auxins are produced in apical meristems at shoot tips and root tips."
+    },
+    {
+        id: 34,
+        section: "16.4",
+        question: "How does unilateral light affect auxin distribution in a plant shoot?",
+        options: [
+            "A. Destroys auxins on the shaded side.",
+            "B. Causes auxins to be transported from illuminated side to shaded side.",
+            "C. Promotes auxin production on the illuminated side.",
+            "D. Inhibits auxin diffusion entirely."
+        ],
+        answer: 1,
+        explanation: "Unilateral light causes lateral transport of auxins from the illuminated side to the shaded side."
+    },
+    {
+        id: 35,
+        section: "16.4",
+        question: "At a moderate high concentration of auxin (e.g., 1 ppm):",
+        options: [
+            "A. Shoot growth is stimulated; root growth is inhibited.",
+            "B. Root growth is stimulated; shoot growth is inhibited.",
+            "C. Both shoot and root growth are stimulated.",
+            "D. Both shoot and root growth are inhibited."
+        ],
+        answer: 0,
+        explanation: "Shoots require higher auxin concentrations for growth stimulation. The same concentration inhibits root elongation."
+    },
+    {
+        id: 36,
+        section: "16.4",
+        question: "Why does a plant root bend away from unilateral light?",
+        options: [
+            "A. High auxin concentration on the shaded side stimulates growth.",
+            "B. High auxin concentration on the shaded side inhibits root cell elongation, causing the illuminated side to grow faster.",
+            "C. Low auxin concentration on shaded side causes cell destruction.",
+            "D. Light stimulates root cells to elongate faster."
+        ],
+        answer: 1,
+        explanation: "Roots are sensitive; high auxin concentration on the shaded side inhibits cell elongation, so the illuminated side grows faster and bends away from light."
+    },
+    {
+        id: 37,
+        section: "16.4",
+        question: "Which synthetic application of auxins is used in agriculture to kill broad-leaved weeds?",
+        options: [
+            "A. Rooting powder",
+            "B. Herbicides in high concentrations",
+            "C. Seedless fruit production on unpollinated flowers",
+            "D. Orthokeratology treatments"
+        ],
+        answer: 1,
+        explanation: "High concentrations of synthetic auxins are used as herbicides; they boost rapid shoot growth in broad-leaved weeds until stems collapse."
+    },
+    {
+        id: 38,
+        section: "16.4",
+        question: "Applying auxins to unpollinated flowers can result in the formation of:",
+        options: [
+            "A. Seedless fruits",
+            "B. Flowers with doubled petal numbers",
+            "C. Stems with high negative geotropism",
+            "D. Roots with increased root hair density"
+        ],
+        answer: 0,
+        explanation: "Applying auxins to unpollinated flowers induces fruit set without fertilization, producing seedless fruits."
+    },
+
+    // Additional HKDSE Combination & Conceptual Questions
+    {
+        id: 39,
+        section: "16.2",
+        question: "Which of the following structures contain muscle tissue?\n(1) Ciliary body\n(2) Iris\n(3) Sclera",
+        options: [
+            "A. (1) and (2) only",
+            "B. (1) and (3) only",
+            "C. (2) and (3) only",
+            "D. (1), (2) and (3)"
+        ],
+        answer: 0,
+        explanation: "Ciliary body (ciliary muscles) and iris (circular and radial muscles) contain muscles. Sclera is a tough fibrous coat."
+    },
+    {
+        id: 40,
+        section: "16.2",
+        question: "A person looking at a clock 5 metres away suddenly looks at a book in his hand. What occurs in his eye?\n(1) Ciliary muscles contract\n(2) Suspensory ligaments slacken\n(3) Lens curvature increases",
+        options: [
+            "A. (1) and (2) only",
+            "B. (1) and (3) only",
+            "C. (2) and (3) only",
+            "D. (1), (2) and (3)"
+        ],
+        answer: 3,
+        explanation: "Shifting from distant to near vision involves ciliary muscle contraction, slackening of suspensory ligaments, and increased lens curvature (thicker lens)."
+    },
+    {
+        id: 41,
+        section: "16.2",
+        question: "Which visual symptom is characteristic of cataract?",
+        options: [
+            "A. Loss of peripheral vision ('tunnel vision')",
+            "B. Cloudiness in the lens interfering with vision",
+            "C. Inability to distinguish red and green colours",
+            "D. Image focused behind retina"
+        ],
+        answer: 1,
+        explanation: "Cataract is characterized by a dense, cloudy area inside the lens that blocks/scatters light entering the eye."
+    },
+    {
+        id: 42,
+        section: "16.3",
+        question: "Sequence of sound wave transmission in human ear:\n(1) Vibration of eardrum\n(2) Wave movement in perilymph\n(3) Amplification by ear bones\n(4) Stimulation of hair cells in endolymph",
+        options: [
+            "A. (1) -> (3) -> (2) -> (4)",
+            "B. (3) -> (1) -> (2) -> (4)",
+            "C. (1) -> (2) -> (3) -> (4)",
+            "D. (2) -> (1) -> (3) -> (4)"
+        ],
+        answer: 0,
+        explanation: "Sound waves vibrate eardrum (1) -> amplified by ear bones (3) -> transmitted via oval window to perilymph waves (2) -> stimulates hair cells in endolymph (4)."
+    },
+    {
+        id: 43,
+        section: "16.3",
+        question: "During a flight descent, swallowing or yawning helps relieve ear pain because it:",
+        options: [
+            "A. Relaxes ear bones in middle ear",
+            "B. Opens Eustachian tube to equalize pressure across eardrum",
+            "C. Reduces fluid pressure in cochlea",
+            "D. Stops endolymph movement"
+        ],
+        answer: 1,
+        explanation: "Swallowing/yawning opens the Eustachian tube, equalizing air pressure between middle ear and atmosphere."
+    },
+    {
+        id: 44,
+        section: "16.4",
+        question: "A seedling is mounted horizontally on a rotating clinostat exposed to unilateral light. How will the shoot grow?",
+        options: [
+            "A. Bend towards light source",
+            "B. Bend downwards due to gravity",
+            "C. Grow horizontally straight without bending",
+            "D. Stop growing completely"
+        ],
+        answer: 2,
+        explanation: "Rotating clinostat cancels out unilateral light and gravity effects by exposing all sides equally, resulting in straight growth."
+    },
+    {
+        id: 45,
+        section: "16.4",
+        question: "An agar block containing auxin is placed on the left half of a decapitated coleoptile in darkness. The shoot will:",
+        options: [
+            "A. Grow vertically straight",
+            "B. Bend to the right",
+            "C. Bend to the left",
+            "D. Show no growth"
+        ],
+        answer: 1,
+        explanation: "Auxin diffuses down the left side, stimulating faster growth on the left half, causing the coleoptile to bend towards the right."
+    },
+    {
+        id: 46,
+        section: "16.2",
+        question: "Which photoreceptor type is concentrated at the yellow spot, and what is its characteristic sensitivity?",
+        options: [
+            "A. Rod cells; high sensitivity in dim light",
+            "B. Cone cells; low sensitivity (stimulated by bright light)",
+            "C. Rod cells; responsible for colour vision",
+            "D. Cone cells; contain visual purple"
+        ],
+        answer: 1,
+        explanation: "The yellow spot contains cone cells only, which have lower light sensitivity and operate in bright light for colour vision."
+    },
+    {
+        id: 47,
+        section: "16.2",
+        question: "An old person experiences decreased elasticity of the lens. He will have difficulty focusing on:",
+        options: [
+            "A. Nearby objects because the lens cannot become thick enough.",
+            "B. Distant objects because the lens cannot become thick enough.",
+            "C. Nearby objects because the lens cannot be pulled thin enough.",
+            "D. Distant objects because ciliary muscles cannot relax."
+        ],
+        answer: 0,
+        explanation: "Focusing on near objects requires the elastic lens to bulge (become thicker). Reduced elasticity prevents full thickening."
+    },
+    {
+        id: 48,
+        section: "16.3",
+        question: "Damage to which nerve leads to complete loss of hearing and balance information sent to the brain?",
+        options: [
+            "A. Optic nerve",
+            "B. Auditory nerve",
+            "C. Cervical spinal nerve",
+            "D. Oculomotor nerve"
+        ],
+        answer: 1,
+        explanation: "The auditory nerve transmits nerve impulses from both the cochlea (hearing) and semicircular canals (balance) to the brain."
+    },
+    {
+        id: 49,
+        section: "16.4",
+        question: "Rooting powder containing auxin promotes root development when planting cuttings because auxins at low concentrations:",
+        options: [
+            "A. Stimulate cell division and elongation in roots",
+            "B. Inhibit root growth completely",
+            "C. Prevent water absorption",
+            "D. Kill surrounding weeds"
+        ],
+        answer: 0,
+        explanation: "At low concentrations (e.g. 10^-5 to 10^-4 ppm), auxins stimulate root growth."
+    },
+    {
+        id: 50,
+        section: "16.1",
+        question: "In human irritability mechanisms, what transforms stimuli into nerve impulses?",
+        options: [
+            "A. Effectors",
+            "B. Receptors / sensory cells",
+            "C. Motor neurones",
+            "D. Endocrine glands"
+        ],
+        answer: 1,
+        explanation: "Receptors (sensory cells) detect stimuli and convert them into nerve impulses."
+    }
+];
+
+let userAnswers = {};
+let isRetryMode = false;
+let currentRetryIds = [];
+
+function renderQuiz() {
+    const container = document.getElementById('quizContainer');
+    const topicFilter = document.getElementById('topicFilter').value;
+    container.innerHTML = '';
+
+    let filteredQuestions = quizData.filter(q => {
+        if (isRetryMode) {
+            return currentRetryIds.includes(q.id);
+        }
+        if (topicFilter !== 'ALL' && q.section !== topicFilter) {
+            return false;
+        }
+        return true;
+    });
+
+    if (filteredQuestions.length === 0) {
+        container.innerHTML = `
+            <div class="no-questions">
+                <h3>No questions found!</h3>
+                <p>${isRetryMode ? 'Great job! You have no wrong questions in this view.' : 'Try selecting another topic filter.'}</p>
+            </div>
+        `;
+        return;
+    }
+
+    filteredQuestions.forEach((q) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `q-card-${q.id}`;
+
+        const answered = userAnswers[q.id] !== undefined;
+        const isCorrect = userAnswers[q.id] === q.answer;
+
+        if (answered) {
+            card.classList.add(isCorrect ? 'correct-attempt' : 'wrong-attempt');
+        }
+
+        let optionsHTML = '';
+        q.options.forEach((opt, optIdx) => {
+            let btnClass = 'option-btn';
+            if (answered) {
+                if (userAnswers[q.id] === optIdx) {
+                    btnClass += optIdx === q.answer ? ' selected-correct' : ' selected-incorrect';
+                } else if (optIdx === q.answer) {
+                    btnClass += ' reveal-correct';
+                }
+            }
+
+            optionsHTML += `
+                <button class="${btnClass}" 
+                        onclick="selectOption(${q.id}, ${optIdx})" 
+                        ${answered ? 'disabled' : ''}>
+                    <span>${opt}</span>
+                </button>
+            `;
+        });
+
+        card.innerHTML = `
+            <div class="question-header">
+                <span>Question ${q.id} of ${quizData.length}</span>
+                <span class="question-tag">Section ${q.section}</span>
+            </div>
+            <div class="question-text">${q.question}</div>
+            <div class="options">${optionsHTML}</div>
+            <div class="explanation" id="exp-${q.id}" style="display: ${answered ? 'block' : 'none'}">
+                <div class="explanation-title">Explanation:</div>
+                <div>${q.explanation}</div>
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+
+    updateScoreBoard();
+}
+
+function selectOption(qId, optIndex) {
+    userAnswers[qId] = optIndex;
+    renderQuiz();
+}
+
+function getWrongQuestionIds() {
+    return Object.keys(userAnswers)
+        .map(id => parseInt(id))
+        .filter(id => {
+            const q = quizData.find(item => item.id === id);
+            return q && userAnswers[id] !== q.answer;
+        });
+}
+
+function updateScoreBoard() {
+    const attemptedIds = Object.keys(userAnswers);
+    let correctCount = 0;
+    let wrongCount = 0;
+
+    attemptedIds.forEach(id => {
+        const q = quizData.find(item => item.id == id);
+        if (q) {
+            if (userAnswers[id] === q.answer) {
+                correctCount++;
+            } else {
+                wrongCount++;
+            }
+        }
+    });
+
+    const scoreEl = document.getElementById('score');
+    const attemptedEl = document.getElementById('attempted');
+    const wrongCountEl = document.getElementById('wrongCount');
+    const wrongBadgeEl = document.getElementById('wrongBadge');
+    const retryBtn = document.getElementById('retryBtn');
+
+    if (scoreEl) scoreEl.innerText = correctCount;
+    if (attemptedEl) attemptedEl.innerText = attemptedIds.length;
+    if (wrongCountEl) wrongCountEl.innerText = wrongCount;
+    if (wrongBadgeEl) wrongBadgeEl.innerText = wrongCount;
+
+    if (retryBtn) {
+        if (wrongCount > 0 && !isRetryMode) {
+            retryBtn.style.display = 'inline-block';
+            retryBtn.innerText = `Retry Incorrect Questions (${wrongCount})`;
+            retryBtn.style.background = "var(--accent)";
+        } else if (isRetryMode) {
+            retryBtn.style.display = 'inline-block';
+            retryBtn.innerText = "Show All Questions";
+            retryBtn.style.background = "var(--primary)";
+        } else {
+            retryBtn.style.display = 'none';
+        }
+    }
+}
+
+function toggleRetryMode() {
+    isRetryMode = !isRetryMode;
+
+    if (isRetryMode) {
+        // Collect wrong question IDs before resetting user answers for those questions
+        currentRetryIds = getWrongQuestionIds();
+        
+        // Clear stored answers for wrong questions so user can re-try
+        currentRetryIds.forEach(id => {
+            delete userAnswers[id];
+        });
+    } else {
+        currentRetryIds = [];
+    }
+
+    renderQuiz();
+}
+
+function filterQuestions() {
+    renderQuiz();
+}
+
+function resetQuiz() {
+    userAnswers = {};
+    isRetryMode = false;
+    currentRetryIds = [];
+    const retryBtn = document.getElementById('retryBtn');
+    if (retryBtn) {
+        retryBtn.innerText = `Retry Incorrect Questions (0)`;
+        retryBtn.style.background = "var(--accent)";
+        retryBtn.style.display = 'none';
+    }
+    renderQuiz();
+}
+
+// Initial render
+renderQuiz();
+</script>
+
+</body>
+</html>
